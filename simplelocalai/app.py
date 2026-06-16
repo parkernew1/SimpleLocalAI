@@ -61,7 +61,7 @@ class ChatApp:
         apple = self.config.data["models"]["apple"]
         lines = [
             "SimpleLocalAI",
-            "Local chat: Qwen now, Apple Foundation Model when macOS is ready",
+            "Local chat: Qwen and Apple Foundation Model",
             f"Active: {active}   Qwen ctx: {qwen['options'].get('num_ctx')}   AFM helper: {self._yes_no(find_apple_helper(apple) is not None)}",
             f"Config: {self.config.path}",
             "Try /settings, /status, /model, /preset coding, or /help.",
@@ -159,7 +159,7 @@ class ChatApp:
             f"helper:     {find_apple_helper(apple) or 'not built/found'}",
             f"timeout:    {apple.get('timeout_seconds')} sec",
             f"max tokens: {apple.get('options', {}).get('maximum_response_tokens')}",
-            "note:       Sequoia will warn; retry after Tahoe upgrade.",
+            "note:       Run /afm or /doctor if availability changes.",
         ]
         transcript_lines = [
             f"messages:   {len(self.messages)} in memory",
@@ -178,10 +178,10 @@ class ChatApp:
             f"temperature: {apple.get('options', {}).get('temperature')}",
             f"max tokens:  {apple.get('options', {}).get('maximum_response_tokens')}",
             "",
-            "After upgrading macOS:",
-            "1. make apple-helper",
+            "Readiness path:",
+            "1. make apple-helper when the OS or SDK changes",
             "2. python3 -m simplelocalai doctor",
-            "3. /model apple",
+            "3. /model apple when doctor reports available",
             "",
             "Use /settings to change AFM helper path or max tokens.",
         ]
