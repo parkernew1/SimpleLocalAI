@@ -27,6 +27,7 @@ Inside the chat:
 ```text
 /model apple
 /model qwen
+/afm
 /config
 /config set qwen.options.temperature 0.4
 /config set qwen.model qwen3.5:9b
@@ -91,6 +92,21 @@ Apple's on-device model is exposed to third-party apps through the official `Fou
 
 macOS Sequoia is expected to report that Foundation Models are unavailable. That is okay if you only want to use Qwen for now.
 
+After upgrading macOS, use this quick path:
+
+```bash
+make apple-helper
+python3 -m simplelocalai doctor
+python3 -m simplelocalai chat
+```
+
+Then in the TUI:
+
+```text
+/afm
+/model apple
+```
+
 Build it on a supported Mac with Xcode command-line tools:
 
 ```bash
@@ -129,8 +145,14 @@ The Qwen provider also passes `qwen.think` to Ollama's top-level `think` field.
 
 - `/model [apple|qwen]` shows or changes the active model.
 - `/models` lists available configured models.
+- `/status` shows model and session status cards.
+- `/settings` opens the guided settings menu.
+- `/afm` shows Apple Foundation Model setup and readiness notes.
 - `/config` prints current config.
 - `/config set <model.path> <value>` updates config and saves it.
+- `/preset normal` sets Qwen context to 16K.
+- `/preset coding` sets Qwen context to 32K.
+- `/context <tokens>` sets Qwen context directly, e.g. `/context 32k`.
 - `/new` clears the current transcript.
 - `/save [path]` saves a Markdown transcript.
 - `/doctor` runs local readiness checks.

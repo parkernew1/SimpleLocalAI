@@ -35,7 +35,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
                 "top_p": 0.9,
                 "top_k": 40,
                 "repeat_penalty": 1.1,
-                "num_ctx": 4096,
+                "num_ctx": 16384,
                 "num_predict": 768,
             },
         },
