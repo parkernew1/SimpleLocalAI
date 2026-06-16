@@ -43,12 +43,7 @@ class OllamaClient:
 
     def chat(self, messages: list[Message]) -> Iterator[str]:
         url = self.config["base_url"].rstrip("/") + "/api/chat"
-        payload = {
-            "model": self.config["model"],
-            "messages": self._ollama_messages(messages),
-            "stream": bool(self.config.get("stream", True)),
-            "options": self.config.get("options", {}),
-        }
+        payload = self._payload(messages)
         data = json.dumps(payload).encode("utf-8")
         request = urllib.request.Request(
             url,
@@ -72,6 +67,17 @@ class OllamaClient:
             raise ModelError(f"Ollama HTTP {exc.code}: {body}") from exc
         except (OSError, urllib.error.URLError, TimeoutError) as exc:
             raise ModelError(f"Could not reach local Ollama at {url}: {exc}") from exc
+
+    def _payload(self, messages: list[Message]) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "model": self.config["model"],
+            "messages": self._ollama_messages(messages),
+            "stream": bool(self.config.get("stream", True)),
+            "options": self.config.get("options", {}),
+        }
+        if "think" in self.config:
+            payload["think"] = self.config["think"]
+        return payload
 
     def _ollama_messages(self, messages: list[Message]) -> list[dict[str, str]]:
         output = []
@@ -166,4 +172,3 @@ def find_apple_helper(config: dict[str, Any]) -> Path | None:
         if candidate.exists() and os.access(candidate, os.X_OK):
             return candidate
     return None
-

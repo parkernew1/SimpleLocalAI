@@ -29,6 +29,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
             "system_prompt": "You are a concise, helpful local assistant.",
             "timeout_seconds": 300,
             "stream": True,
+            "think": False,
             "options": {
                 "temperature": 0.7,
                 "top_p": 0.9,
@@ -103,4 +104,3 @@ def parse_config_value(value_text: str) -> Any:
         return json.loads(value_text)
     except json.JSONDecodeError:
         return value_text
-

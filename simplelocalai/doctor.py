@@ -20,22 +20,34 @@ def run_doctor(config_path: str | None = None) -> int:
 
     qwen = config.data["models"]["qwen"]
     base_url = qwen["base_url"].rstrip("/")
+    target = qwen["model"]
     print("\nQwen / Ollama")
+    ollama_bin = shutil.which("ollama")
+    if not ollama_bin:
+        ok = False
+        print("  warn: ollama is not installed or is not on PATH.")
+        print("  manual: install Ollama, then run:")
+        print(f"          ollama pull {target}")
+        print("          ollama serve")
+    else:
+        print(f"  ok: ollama CLI found at {ollama_bin}")
+
     try:
         with urllib.request.urlopen(f"{base_url}/api/tags", timeout=5) as response:
             payload = json.loads(response.read().decode("utf-8"))
         names = sorted(model.get("name", "") for model in payload.get("models", []))
-        target = qwen["model"]
         if target in names:
             print(f"  ok: Ollama is running and {target} is installed.")
         else:
             ok = False
             print(f"  warn: Ollama is running, but {target} was not found.")
             print("  installed:", ", ".join(names) if names else "(none)")
+            print(f"  manual: ollama pull {target}")
     except (OSError, urllib.error.URLError, json.JSONDecodeError) as exc:
         ok = False
         print(f"  warn: could not reach Ollama at {base_url}: {exc}")
-        print("  manual: start Ollama and pull your Qwen model.")
+        if ollama_bin:
+            print("  manual: start Ollama with `ollama serve`, then rerun doctor.")
 
     print("\nApple Foundation Model")
     helper = find_apple_helper(config.data["models"]["apple"])
@@ -58,6 +70,7 @@ def run_doctor(config_path: str | None = None) -> int:
         ok = False
         print("  warn: helper was not found.")
         print("  manual: build scripts/apple-foundation-helper.swift into build/apple-foundation-helper.")
+        print("  note: this can wait if you only want Qwen on macOS Sequoia.")
 
     swiftc = shutil.which("swiftc")
     print("\nTooling")
